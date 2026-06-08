@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+# Typically folder-type builds have directories inside dist/ and build/, but we also keep .spec files unless ignored.
+# We will keep RememberWindowsState.spec tracked as it is in the root directory.
+
+# Installer outputs
+*.exe
+*.msi
+
+# Local config / states (just in case they are generated in the root)
+config.json
+windows_state.json
+history.json
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

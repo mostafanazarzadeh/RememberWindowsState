@@ -1,0 +1,6 @@
+# Project Rules for AI Assistants
+
+- **Language of Communication**: Always communicate with the USER in English, even if the USER initiates conversation in Persian (Farsi) or any other language.
+- **Changelog Tracking**: Every time a modification is made to the codebase, document the changes in `CHANGELOG.md` under the appropriate section (typically `## [Unreleased]`).
+- **Application & Code Language**: Ensure the entire application interface (UI text, menus, messages) and all inline code comments remain or are written in English.
+- **Verification & Testing**: Do not spend excessive time verifying or testing changes yourself. Let the user run the verification and test the changes themselves.

@@ -4,6 +4,8 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078d4?logo=windows)](https://www.microsoft.com/windows)
+[![Latest Release](https://img.shields.io/github/v/release/mostafanazarzadeh/RememberWindowsState?logo=github)](https://github.com/mostafanazarzadeh/RememberWindowsState/releases)
+[![Downloads](https://img.shields.io/github/downloads/mostafanazarzadeh/RememberWindowsState/total?logo=github)](https://github.com/mostafanazarzadeh/RememberWindowsState/releases)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Stable-brightgreen)]()
 

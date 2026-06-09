@@ -14,9 +14,10 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Screenshots](#screenshots)
-- [Requirements](#requirements)
 - [Installation](#installation)
-  - [Run from Source](#run-from-source)
+  - [Use Prebuilt Installer](#use-prebuilt-installer)
+  - [Build from Source](#build-from-source)
+    - [Requirements](#requirements)
   - [Build Installer (.exe)](#build-installer-exe)
 - [Usage](#usage)
 - [Configuration](#configuration)
@@ -52,10 +53,22 @@ Whether you've experienced an unexpected shutdown, a Windows Update reboot, or s
 
 ---
 
-## Requirements
+## Installation
+
+### Use Prebuilt Installer
+
+The easiest way to get started is to download the prebuilt installer:
+
+1. Download the latest installer (`RememberWindowsState-Setup.exe`) from the [Releases](https://github.com/mostafanazarzadeh/RememberWindowsState/releases) page.
+2. Run the installer and follow the setup wizard.
+3. The application will launch and run silently in your System Tray.
+
+### Build from Source
+
+#### Requirements
 
 - **OS**: Windows 10 or Windows 11 (64-bit)
-- **Python**: 3.10 or higher (for running from source)
+- **Python**: 3.10 or higher
 - **Dependencies** (auto-installed via `pip`):
 
 ```
@@ -65,18 +78,14 @@ pystray >= 0.19.5
 Pillow  >= 10.0.0
 ```
 
-> For building an installer, [Inno Setup 6](https://jrsoftware.org/isdl.php) is required.
+> For building an installer from source, [Inno Setup 6](https://jrsoftware.org/isdl.php) is also required.
 
----
-
-## Installation
-
-### Run from Source
+#### Setup Steps
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/RememberWindowsState.git
+   git clone https://github.com/mostafanazarzadeh/RememberWindowsState.git
    cd RememberWindowsState
    ```
 

@@ -154,6 +154,8 @@ class SettingsWindow:
 
         if name == "history":
             self._history_tab.render()
+        elif name == "blacklist":
+            self._blacklist_tab.reload_list()
 
     def show(self):
         try:

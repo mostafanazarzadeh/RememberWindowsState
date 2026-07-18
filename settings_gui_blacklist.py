@@ -101,3 +101,10 @@ class BlacklistTab:
             bl.remove(val)
             self._config.blacklist = bl
         self._lb.delete(idx)
+
+    def reload_list(self):
+        if not hasattr(self, '_lb'):
+            return
+        self._lb.delete(0, tk.END)
+        for item in self._config.blacklist:
+            self._lb.insert(tk.END, item)

@@ -71,7 +71,7 @@ class SettingsWindow:
         tk.Label(hdr, text='⚙️  RememberWindowsState',
                  font=('Segoe UI', 13, 'bold'),
                  bg=SURFACE, fg=TEXT).pack(side='left')
-        tk.Label(hdr, text='v1.0.0',
+        tk.Label(hdr, text='v1.1.0',
                  font=('Segoe UI', 9),
                  bg=SURFACE, fg=TEXT_DIM).pack(side='right')
 

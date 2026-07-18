@@ -179,7 +179,7 @@ class TrayApp:
                 parent=root)
             return
 
-        dlg = RestoreDialog(root, snapshot, not_open)
+        dlg = RestoreDialog(root, snapshot, not_open, self._config)
         self._active_restore_win = dlg._win
         selected = dlg.show()
         self._active_restore_win = None

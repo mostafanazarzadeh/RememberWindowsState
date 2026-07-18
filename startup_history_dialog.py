@@ -303,6 +303,35 @@ class StartupHistoryDialog:
                         v.set(not v.get())
                     lbl.bind('<Button-1>', _toggle_cb)
 
+                    # Blacklist button on the right
+                    if self._config:
+                        def _blacklist_row(win_entry=w, r=row, v=var, w_list=windows, card_idx=idx):
+                            exe_name = win_entry.get('exe_name', '')
+                            if not exe_name:
+                                return
+                            from tkinter import messagebox
+                            if messagebox.askyesno('RememberWindowsState', 
+                                                   f"Are you sure you want to add '{exe_name}' to the blacklist?\n"
+                                                   f"It will no longer be tracked or restored.", parent=self._win):
+                                bl = self._config.blacklist
+                                if not any(b.lower() == exe_name.lower() for b in bl):
+                                    bl.append(exe_name)
+                                    self._config.blacklist = bl
+                                if v in self._card_vars[card_idx]:
+                                    self._card_vars[card_idx].remove(v)
+                                if win_entry in w_list:
+                                    w_list.remove(win_entry)
+                                r.destroy()
+
+                        bl_btn = tk.Button(row, text='🚫', bg=SURFACE2, fg=DANGER,
+                                           font=('Segoe UI Emoji', 9), relief='flat',
+                                           cursor='hand2', padx=6, pady=2, bd=0)
+                        bl_btn.pack(side='right', padx=(6, 0))
+                        bl_btn.configure(command=_blacklist_row)
+
+                        bl_btn.bind('<Enter>', lambda e, b=bl_btn: b.configure(bg='#ffe5e5', fg=DANGER))
+                        bl_btn.bind('<Leave>', lambda e, b=bl_btn: b.configure(bg=SURFACE2, fg=DANGER))
+
                 # Restore button inside detail
                 rest_btn = tk.Button(
                     detail,

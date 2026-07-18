@@ -15,7 +15,6 @@
 
 - [Overview](#overview)
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Installation](#installation)
   - [Use Prebuilt Installer](#use-prebuilt-installer)
   - [Build from Source](#build-from-source)

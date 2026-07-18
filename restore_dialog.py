@@ -18,10 +18,11 @@ class RestoreDialog:
     the ones the user selected for restoration.
     """
 
-    def __init__(self, master: tk.Tk, snapshot: dict, not_open: list[dict]):
+    def __init__(self, master: tk.Tk, snapshot: dict, not_open: list[dict], config=None):
         self._master    = master
         self._snapshot  = snapshot
         self._not_open  = not_open
+        self._config    = config
         self._check_vars: list[tk.BooleanVar] = []
         self._result: list[dict] = []
 
@@ -129,6 +130,36 @@ class RestoreDialog:
             tk.Label(info, text=f'  {title_txt}',
                      font=('Segoe UI', 8), bg=row_bg,
                      fg=TEXT_DIM, anchor='w').pack(fill='x')
+
+            # Blacklist button on the right
+            if self._config:
+                def _blacklist_row(win_entry=win, r=row, v=var):
+                    exe_name = win_entry.get('exe_name', '')
+                    if not exe_name:
+                        return
+                    from tkinter import messagebox
+                    if messagebox.askyesno('RememberWindowsState', 
+                                           f"Are you sure you want to add '{exe_name}' to the blacklist?\n"
+                                           f"It will no longer be tracked or restored.", parent=self._win):
+                        bl = self._config.blacklist
+                        if not any(b.lower() == exe_name.lower() for b in bl):
+                            bl.append(exe_name)
+                            self._config.blacklist = bl
+                        if v in self._check_vars:
+                            self._check_vars.remove(v)
+                        if win_entry in self._not_open:
+                            self._not_open.remove(win_entry)
+                        r.destroy()
+
+                bl_btn = tk.Button(row, text='🚫', bg=row_bg, fg=DANGER,
+                                   font=('Segoe UI Emoji', 9), relief='flat',
+                                   cursor='hand2', padx=6, pady=2, bd=0)
+                bl_btn.pack(side='right', padx=(6, 0))
+                bl_btn.configure(command=_blacklist_row)
+
+                # Bind hover effects locally
+                bl_btn.bind('<Enter>', lambda e, b=bl_btn: b.configure(bg='#ffe5e5', fg=DANGER))
+                bl_btn.bind('<Leave>', lambda e, b=bl_btn, bg=row_bg: b.configure(bg=bg, fg=DANGER))
 
         # Mouse-wheel scroll
         def _wheel(evt):

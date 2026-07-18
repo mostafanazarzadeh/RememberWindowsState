@@ -5,6 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.0] — 2026-07-18
+
+### Added
+
+- **Direct Blacklist Buttons in App Lists** — Added a convenient `🚫` button in front of every application displayed in:
+  - **Restore Dialog** (`restore_dialog.py`)
+  - **Startup History Dialog** (`startup_history_dialog.py`)
+  - **Settings History Tab** (`settings_gui_history.py`)
+  This enables users to immediately exclude any unwanted process/application from being tracked or restored, with a confirmation prompt.
+
 ## [1.0.0] — 2026-06-08
 
 This is the initial stable release of **RememberWindowsState**, including a fully English user interface, robust system tray integration, automatic state persistence, window startup recovery, and custom user settings.

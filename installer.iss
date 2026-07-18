@@ -1,13 +1,13 @@
 [Setup]
 AppName=RememberWindowsState
-AppVersion=1.0.0
-AppVerName=RememberWindowsState 1.0.0
+AppVersion=1.1.0
+AppVerName=RememberWindowsState 1.1.0
 AppPublisher=RememberWindowsState
 AppPublisherURL=https://github.com/rememberwindowsstate
 DefaultDirName={autopf}\RememberWindowsState
 DefaultGroupName=RememberWindowsState
 OutputDir=dist\installer
-OutputBaseFilename=RememberWindowsState_Setup_1.0.0
+OutputBaseFilename=RememberWindowsState_Setup_1.1.0
 SetupIconFile=assets\icon.ico
 UninstallDisplayIcon={app}\RememberWindowsState.exe
 Compression=lzma2

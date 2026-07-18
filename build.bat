@@ -61,7 +61,7 @@ if defined ISCC (
         echo.
         echo ================================================
         echo   Installer ready:
-        echo   dist\installer\RememberWindowsState_Setup_1.0.0.exe
+        echo   dist\installer\RememberWindowsState_Setup_1.1.0.exe
         echo ================================================
     )
 ) else (

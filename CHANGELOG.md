@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Implemented automatic tracking of user-opened applications (`USER_OPENED_EXES`): only processes that were opened with a visible/minimized window by the user are tracked when minimized/closed to tray. Uninvited background processes are completely ignored.
   - Added `[Tray]` badge and visual indicators in **History Tab** and **Startup History Dialog** for tray apps.
 
+### Fixed
+
+- **Blacklist Tab Real-time Synchronization**: Fixed listbox reload when switching to the Blacklist tab in Settings (`settings_gui.py`, `settings_gui_blacklist.py`), ensuring that items added to the blacklist directly from dialogs immediately appear in the list.
+
 ## [1.2.0] — 2026-07-23
 
 ### Added

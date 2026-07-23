@@ -3,14 +3,17 @@ RememberWindowsState — settings_gui_general.py
 General settings tab class.
 """
 
+import threading
 import tkinter as tk
 from tkinter import messagebox
 from config import Config
 from scheduler import WindowScheduler
 from startup import enable_startup, disable_startup, is_startup_enabled
 from window_tracker import trim_history
-from gui_tokens import BG, SURFACE, BTN_BG, ACCENT, ACCENT_H, TEXT, TEXT_DIM, BORDER
+from gui_tokens import BG, SURFACE, BTN_BG, ACCENT, ACCENT_H, TEXT, TEXT_DIM, BORDER, DANGER, SUCCESS
 from gui_utils import draw_section_header
+from updater import APP_VERSION, check_for_updates, open_release_page
+
 
 
 def _fmt_interval(seconds: int) -> str:
@@ -30,9 +33,36 @@ class GeneralTab:
         self._build()
 
     def _build(self):
-        # Add internal padding
-        inner = tk.Frame(self._parent, bg=BG, padx=22, pady=18)
-        inner.pack(fill='both', expand=True)
+        # ── Scrollable canvas scaffold ─────────────────────────────────
+        outer = tk.Frame(self._parent, bg=BG)
+        outer.pack(fill='both', expand=True, padx=0, pady=0)
+
+        canvas = tk.Canvas(outer, bg=BG, highlightthickness=0, bd=0)
+        vsb = tk.Scrollbar(outer, orient='vertical', command=canvas.yview)
+        canvas.configure(yscrollcommand=vsb.set)
+
+        vsb.pack(side='right', fill='y')
+        canvas.pack(side='left', fill='both', expand=True)
+
+        inner = tk.Frame(canvas, bg=BG, padx=22, pady=18)
+        win_id = canvas.create_window((0, 0), window=inner, anchor='nw')
+
+        def _on_resize(e):
+            canvas.itemconfig(win_id, width=e.width)
+        canvas.bind('<Configure>', _on_resize)
+
+        def _on_frame_resize(e):
+            canvas.configure(scrollregion=canvas.bbox('all'))
+        inner.bind('<Configure>', _on_frame_resize)
+
+        def _on_wheel(e):
+            try:
+                canvas.yview_scroll(int(-1 * (e.delta / 120)), 'units')
+            except Exception:
+                pass
+        canvas.bind('<Enter>', lambda e: canvas.bind_all('<MouseWheel>', _on_wheel))
+        canvas.bind('<Leave>', lambda e: canvas.unbind_all('<MouseWheel>'))
+        canvas.bind('<Destroy>', lambda e: canvas.unbind_all('<MouseWheel>'))
 
         # Section: interval
         draw_section_header(inner, '⏱  Save Interval', BG, ACCENT, BORDER)
@@ -141,6 +171,36 @@ class GeneralTab:
             highlightthickness=0, cursor='hand2', relief='flat')
         chk_exp.pack(side='right')
 
+        # Section: Updates
+        draw_section_header(inner, '🔄  Software Updates', BG, ACCENT, BORDER)
+
+        card_upd = tk.Frame(inner, bg=SURFACE, padx=14, pady=12)
+        card_upd.pack(fill='x', pady=(0, 6))
+
+        info_frame = tk.Frame(card_upd, bg=SURFACE)
+        info_frame.pack(side='left', fill='x', expand=True)
+
+        tk.Label(info_frame, text=f'Current Version: v{APP_VERSION}',
+                 font=('Segoe UI', 10, 'bold'), bg=SURFACE, fg=TEXT
+                 ).pack(anchor='w')
+
+        self._update_status_label = tk.Label(
+            info_frame, text='Check for available application updates.',
+            font=('Segoe UI', 8), bg=SURFACE, fg=TEXT_DIM
+        )
+        self._update_status_label.pack(anchor='w', pady=(2, 0))
+
+        self._update_btn = tk.Button(
+            card_upd, text='Check for Updates',
+            command=self._on_check_update,
+            bg=BTN_BG, fg=TEXT,
+            font=('Segoe UI', 9), relief='flat',
+            cursor='hand2', padx=12, pady=5, bd=0
+        )
+        self._update_btn.pack(side='right')
+        self._update_btn.bind('<Enter>', lambda e: self._on_update_btn_hover(True))
+        self._update_btn.bind('<Leave>', lambda e: self._on_update_btn_hover(False))
+
         tk.Frame(inner, bg=BG, height=8).pack()  # small space
 
         # Save-now button
@@ -155,6 +215,50 @@ class GeneralTab:
                       lambda e: save_btn.configure(bg=ACCENT_H))
         save_btn.bind('<Leave>',
                       lambda e: save_btn.configure(bg=ACCENT))
+
+    def _on_update_btn_hover(self, entering: bool):
+        if self._update_btn.cget('state') == 'disabled':
+            return
+        if self._update_btn.cget('bg') in (ACCENT, ACCENT_H):
+            self._update_btn.configure(bg=ACCENT_H if entering else ACCENT)
+        else:
+            self._update_btn.configure(bg='#cfcfcf' if entering else BTN_BG)
+
+    def _on_check_update(self):
+        self._update_btn.configure(state='disabled', text='Checking...', bg=BTN_BG)
+        self._update_status_label.configure(text='Connecting to GitHub...', fg=TEXT_DIM)
+        threading.Thread(target=self._check_update_thread, daemon=True).start()
+
+    def _check_update_thread(self):
+        res = check_for_updates(APP_VERSION)
+        self._parent.after(0, lambda: self._update_check_finished(res))
+
+    def _update_check_finished(self, res: dict):
+        self._update_btn.configure(state='normal')
+        if res.get('error'):
+            self._update_btn.configure(text='Check for Updates', bg=BTN_BG)
+            self._update_status_label.configure(
+                text=f'⚠️ Could not check for updates ({res["error"]})',
+                fg=DANGER
+            )
+        elif res.get('has_update'):
+            latest = res.get('latest_version', '')
+            url = res.get('release_url', '')
+            self._update_status_label.configure(
+                text=f'🎉 New version available: v{latest}!',
+                fg=ACCENT
+            )
+            self._update_btn.configure(
+                text=f'⬇️ Get v{latest}',
+                command=lambda: open_release_page(url),
+                bg=ACCENT, fg='white'
+            )
+        else:
+            self._update_btn.configure(text='Check for Updates', bg=BTN_BG)
+            self._update_status_label.configure(
+                text=f'✅ You are using the latest version (v{APP_VERSION}).',
+                fg=SUCCESS
+            )
 
     def _on_interval(self, val):
         v = int(val)
@@ -191,3 +295,4 @@ class GeneralTab:
     def _save_now(self):
         self._scheduler.trigger_now()
         messagebox.showinfo('RememberWindowsState', '✅ Windows saved successfully!')
+

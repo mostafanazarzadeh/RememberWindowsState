@@ -11,6 +11,8 @@ from gui_utils import set_window_icon
 from settings_gui_general import GeneralTab
 from settings_gui_blacklist import BlacklistTab
 from settings_gui_history import HistoryTab
+from updater import APP_VERSION
+
 
 _active_window = None
 
@@ -71,7 +73,7 @@ class SettingsWindow:
         tk.Label(hdr, text='⚙️  RememberWindowsState',
                  font=('Segoe UI', 13, 'bold'),
                  bg=SURFACE, fg=TEXT).pack(side='left')
-        tk.Label(hdr, text='v1.1.0',
+        tk.Label(hdr, text=f'v{APP_VERSION}',
                  font=('Segoe UI', 9),
                  bg=SURFACE, fg=TEXT_DIM).pack(side='right')
 

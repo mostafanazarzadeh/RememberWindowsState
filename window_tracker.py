@@ -26,7 +26,7 @@ log = get_logger(__name__)
 
 # ── Executables to always ignore ──────────────────────────────────────────────
 SYSTEM_EXES = {
-    'explorer.exe', 'searchhost.exe', 'startmenuexperiencehost.exe',
+    'explorer.exe', 'searchhost.exe', 'searchapp.exe', 'startmenuexperiencehost.exe',
     'shellexperiencehost.exe', 'runtimebroker.exe', 'svchost.exe',
     'taskhostw.exe', 'sihost.exe', 'ctfmon.exe', 'dwm.exe',
     'fontdrvhost.exe', 'lsass.exe', 'services.exe', 'smss.exe',
@@ -34,14 +34,25 @@ SYSTEM_EXES = {
     'dllhost.exe', 'applicationframehost.exe', 'textinputhost.exe',
     'lockapp.exe', 'logonui.exe', 'userinit.exe',
     'rememberwindowsstate.exe',   # don't track ourselves
-    'taskmgr.exe',
+    'taskmgr.exe', 'backgroundtaskhost.exe', 'widgets.exe',
+    'widgetservice.exe', 'systemsettings.exe', 'gamebar.exe',
+    'gamebarftserver.exe', 'wermgr.exe', 'smartscreen.exe',
+    'securityhealthservice.exe', 'securityhealthsystray.exe',
+    'msedgewebview2.exe', 'compattelrunner.exe', 'usosvc.exe',
+    'audiodg.exe', 'spoolsv.exe', 'searchindexer.exe',
+    'deviceassociationprocess.exe', 'dashost.exe', 'vssvc.exe',
+    'searchprotocolhost.exe', 'searchfilterhost.exe',
 }
+
+
+# ── Track processes that had a visible user window during this session ────────
+USER_OPENED_EXES: set[str] = set()
 
 
 def get_open_windows(blacklist: list | None = None, track_explorer: bool = False) -> list[dict]:
     """
     Return a list of dicts describing every meaningful top-level window
-    or tray-only process currently open, including minimized windows.
+    currently open, including minimized windows and tray processes previously opened by user.
 
     Each record contains:
       title, exe_path, exe_name, x, y, width, height,
@@ -92,7 +103,7 @@ def get_open_windows(blacklist: list | None = None, track_explorer: bool = False
 
         # Ignore background helper windows such as OfficePowerManagerWindow
         title_lower = title.lower()
-        ignore_keywords = {'officepowermanagerwindow'}
+        ignore_keywords = {'officepowermanagerwindow', 'default ime', 'mdevent'}
         if any(kw in title_lower for kw in ignore_keywords):
             return
         try:
@@ -132,6 +143,10 @@ def get_open_windows(blacklist: list | None = None, track_explorer: bool = False
                 return
         if exe_name in blacklist_lower:
             return
+
+        # Mark executable as user-opened window for tray tracking
+        if exe_name != 'explorer.exe':
+            USER_OPENED_EXES.add(exe_path.lower())
 
         # De-duplicate: one entry per exe path (or explorer folder path)
         exe_key = exe_path.lower()
@@ -182,7 +197,7 @@ def get_open_windows(blacklist: list | None = None, track_explorer: bool = False
 
     win32gui.EnumWindows(_enum_callback, None)
 
-    # ── Also capture tray-only processes (running but no visible window) ───────
+    # ── Always capture tray processes that were previously opened by user ───────
     _add_tray_processes(blacklist_lower, seen_exe_paths, windows)
 
     log.debug('get_open_windows — found %d window(s) (incl. minimized/tray)',
@@ -196,17 +211,26 @@ def _add_tray_processes(
         windows: list[dict],
 ) -> None:
     """
-    Walk all running processes and add an entry for any executable that:
-      - has an open window handle (even hidden / tray-only)
-      - is NOT already captured by EnumWindows (i.e., truly tray-only)
+    Walk running processes that own a window handle with a valid title,
+    adding them as tray processes if they were previously opened by the user in this session.
     """
-    # Collect pids that own at least one window (any state)
-    pids_with_any_window: set[int] = set()
+    if not USER_OPENED_EXES:
+        return
+
+    pids_with_titled_window: dict[int, str] = {}
 
     def _any_win_cb(hwnd, _):
         try:
+            title = win32gui.GetWindowText(hwnd).strip()
+            if not title:
+                return
+            title_lower = title.lower()
+            ignore_kw = {'officepowermanagerwindow', 'default ime', 'mdevent'}
+            if any(kw in title_lower for kw in ignore_kw):
+                return
             _, pid = win32process.GetWindowThreadProcessId(hwnd)
-            pids_with_any_window.add(pid)
+            if pid not in pids_with_titled_window:
+                pids_with_titled_window[pid] = title
         except Exception:
             pass
 
@@ -215,7 +239,7 @@ def _add_tray_processes(
     except Exception:
         pass
 
-    for pid in pids_with_any_window:
+    for pid, title in pids_with_titled_window.items():
         try:
             proc = psutil.Process(pid)
             exe_path = proc.exe()
@@ -231,16 +255,15 @@ def _add_tray_processes(
         exe_key = exe_path.lower()
         if exe_key in seen_exe_paths:
             continue   # already captured as normal/minimized
+
+        # Only include if user previously opened a window for this exe
+        if exe_key not in USER_OPENED_EXES:
+            continue
+
         seen_exe_paths.add(exe_key)
 
-        # Try to get a name from the process cmdline or exe
-        try:
-            name = proc.name()
-        except Exception:
-            name = exe_name
-
         windows.append({
-            'title':     name,
+            'title':     title if title else exe_name,
             'exe_path':  exe_path,
             'exe_name':  exe_name,
             'x':         0,

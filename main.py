@@ -61,7 +61,10 @@ class WindowChangeWatcher:
     def start(self):
         # Seed the initial state without saving
         try:
-            wins = get_open_windows(blacklist=self._config.blacklist, track_explorer=self._config.track_explorer)
+            wins = get_open_windows(
+                blacklist=self._config.blacklist,
+                track_explorer=self._config.track_explorer,
+            )
             self._last_set = get_window_exe_set(wins)
         except Exception:
             pass
@@ -79,7 +82,10 @@ class WindowChangeWatcher:
             if self._stop_evt.is_set():
                 break
             try:
-                wins     = get_open_windows(blacklist=self._config.blacklist, track_explorer=self._config.track_explorer)
+                wins = get_open_windows(
+                    blacklist=self._config.blacklist,
+                    track_explorer=self._config.track_explorer,
+                )
                 cur_set  = get_window_exe_set(wins)
                 if cur_set != self._last_set:
                     opened = cur_set - self._last_set
@@ -134,7 +140,10 @@ def _already_running() -> bool:
 # ── Snapshot save callback ────────────────────────────────────────────────────
 def _do_save(config: Config, is_manual: bool = False) -> None:
     try:
-        windows = get_open_windows(blacklist=config.blacklist, track_explorer=config.track_explorer)
+        windows = get_open_windows(
+            blacklist=config.blacklist,
+            track_explorer=config.track_explorer,
+        )
         save_snapshot(windows, config.state_file)
         log.info('Snapshot saved — %d window(s) recorded', len(windows))
         if is_manual:

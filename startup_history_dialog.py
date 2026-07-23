@@ -290,6 +290,8 @@ class StartupHistoryDialog:
                     cb.pack(side='left', padx=(2, 6))
 
                     lbl_text_app = f'{app}  —  {title}'
+                    if w.get('state') == 'tray':
+                        lbl_text_app += ' [Tray]'
                     if is_running:
                         lbl_text_app += ' (Running)'
 

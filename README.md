@@ -49,6 +49,7 @@ Whether you've experienced an unexpected shutdown, a Windows Update reboot, or s
 | 🖥 **System Tray Icon** | Runs silently in the background with a clean tray menu |
 | 🚫 **Application Blacklist** | Exclude specific apps (by `.exe` name) from being tracked |
 | 📜 **Snapshot History** | View the last saved snapshot directly from the tray |
+| 🔄 **Software Update Check** | Check for latest releases from GitHub directly in General Settings |
 | 🔒 **Single-Instance Guard** | Prevents multiple instances from running simultaneously |
 | 💾 **Local Storage Only** | All data is stored exclusively on your local machine — no cloud, no telemetry |
 
@@ -155,7 +156,9 @@ Open **Settings** from the tray icon to configure:
 | Setting | Default | Description |
 |---|---|---|
 | **Save Interval** | 30 seconds | How often to snapshot open windows |
+| **History Limit** | 50 states | Maximum saved snapshot entries to maintain in history |
 | **Run at Windows Startup** | Off | Add/remove from Windows Registry autostart |
+| **Windows Explorer** | On | Track and restore individual open Explorer folder paths |
 | **Blacklist** | *(empty)* | List of `.exe` filenames to exclude from tracking |
 
 Settings are persisted automatically to `config.json`.

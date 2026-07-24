@@ -7,7 +7,7 @@ import json
 import urllib.request
 import webbrowser
 
-APP_VERSION = '1.3.0'
+APP_VERSION = '1.3.1'
 GITHUB_RELEASES_URL = 'https://api.github.com/repos/mostafanazarzadeh/RememberWindowsState/releases/latest'
 GITHUB_LATEST_RELEASE_PAGE = 'https://github.com/mostafanazarzadeh/RememberWindowsState/releases'
 

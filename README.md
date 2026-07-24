@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078d4?logo=windows)](https://www.microsoft.com/windows)
 [![Latest Release](https://img.shields.io/github/v/release/mostafanazarzadeh/RememberWindowsState?logo=github)](https://github.com/mostafanazarzadeh/RememberWindowsState/releases)
 [![Downloads](https://img.shields.io/github/downloads/mostafanazarzadeh/RememberWindowsState/total?logo=github)](https://github.com/mostafanazarzadeh/RememberWindowsState/releases)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPLv3-blue)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Stable-brightgreen)]()
 
 ---
@@ -292,7 +292,7 @@ RememberWindowsState collects **no personal data** and makes **no network connec
 
 ## License
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+This project is licensed under the **GNU General Public License v3.0 (GPLv3)** — see [LICENSE](LICENSE) for details.
 
 ---
 

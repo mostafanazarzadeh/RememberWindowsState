@@ -7,7 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- **License Update**: Relicensed the project under **GNU General Public License v3.0 (GPLv3)**.
+- **License Update**: Relicensed the project under **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.
 
 ## [1.3.0] — 2026-07-23
 
